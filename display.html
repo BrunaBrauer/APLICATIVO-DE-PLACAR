@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placar - Basquete 3x3</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --bg: #050607;
+            --text: rgba(255, 255, 255, 0.92);
+            --muted: rgba(255, 255, 255, 0.65);
+            --digital: #00ff7b;
+            --digital2: #00d9ff;
+            --warn: #ff3b3b;
+            --active: #ffd000;
+            --outline: rgba(255, 255, 255, 1);
+            --outline_w: 4px;
+        }
+        html, body {
+            height: 100%;
+            overflow: hidden; /* remove a barra de rolagem */
+        }
+        body {
+            margin: 0;
+            height: 100vh;
+            background: radial-gradient(1200px 600px at 50% 0%, rgba(0, 217, 255, 0.12), transparent 60%),
+                        radial-gradient(900px 500px at 50% 100%, rgba(0, 255, 123, 0.10), transparent 60%),
+                        var(--bg);
+            color: var(--text);
+            padding: clamp(14px, 2.2vmin, 28px);
+            display: grid;
+            grid-template-rows: min-content 1fr;
+            gap: clamp(10px, 1.6vmin, 18px);
+            overscroll-behavior: none;
+        }
+        .scoreboard-header {
+            /* título pequeno, mas dentro do fluxo (não “rouba” área útil) */
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .scoreboard-header h1 {
+            font-size: clamp(18px, 2vmin, 30px);
+            color: var(--text);
+            margin: 0;
+            letter-spacing: 1px;
+            line-height: 1.05;
+            opacity: 0.85;
+        }
+
+        /* Layout principal (16:9 friendly): times nas laterais, relógios no centro */
+        .layout {
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1.15fr 0.7fr 1.15fr; /* times maiores, centro menor */
+            grid-template-rows: 0.62fr 0.38fr; /* tempo de jogo maior que posse */
+            gap: clamp(10px, 1.8vmin, 22px);
+            align-items: stretch;
+            min-height: 0; /* permite os filhos “encolherem” sem overflow */
+        }
+        .team-display { grid-row: 1 / span 2; }
+        #teamADisplay { grid-column: 1; }
+        #teamBDisplay { grid-column: 3; }
+        #gameTimerPanel { grid-column: 2; grid-row: 1; }
+        #possessionTimerPanel { grid-column: 2; grid-row: 2; }
+
+        .game-time-top {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(12px, 2vmin, 20px);
+            border-radius: 0;
+            outline: var(--outline_w) solid var(--outline);
+            outline-offset: calc(-1 * var(--outline_w));
+        }
+        .game-time-label {
+            font-size: clamp(16px, 2.2vmin, 28px);
+            color: var(--muted);
+            margin-bottom: clamp(6px, 1.1vmin, 10px);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .game-time-value {
+            /* Sempre caber: responsivo ao menor eixo (vmin) */
+            font-size: clamp(80px, 12.5vmin, 170px);
+            font-weight: 900;
+            color: var(--digital2);
+            line-height: 1;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            letter-spacing: 0.12em;
+        }
+        .team-display {
+            text-align: center;
+            padding: clamp(16px, 2.4vmin, 28px) clamp(12px, 2vmin, 22px);
+            border-radius: 0;
+            outline: var(--outline_w) solid var(--outline);
+            outline-offset: calc(-1 * var(--outline_w));
+            /* Faz o painel ser 100% ocupado por áreas (topo / meio / rodapé) */
+            display: grid;
+            grid-template-rows: auto 1fr auto auto;
+            gap: clamp(8px, 1.2vmin, 14px);
+            height: 100%;
+            min-height: 0;
+        }
+        .team-display h2 {
+            font-size: clamp(26px, 4.4vmin, 64px);
+            margin: 0;
+            color: var(--text);
+            letter-spacing: 1px;
+            line-height: 1.05;
+        }
+        .score-display {
+            /* Grande, mas sem cortar em 1080p */
+            /* Usa mais altura do painel: base em vh e vmin */
+            font-size: clamp(160px, 32vh, 520px);
+            font-weight: 900;
+            color: var(--digital);
+            margin: 0;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            letter-spacing: 0.10em;
+            line-height: 0.9;
+            align-self: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+        }
+        .fouls-display {
+            font-size: clamp(18px, 3vmin, 40px);
+            color: rgba(255, 90, 90, 0.95);
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .timeouts-display {
+            font-size: clamp(18px, 2.8vmin, 38px);
+            color: rgba(255, 208, 0, 0.95);
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .possession-bottom {
+            text-align: center;
+            padding: clamp(12px, 2vmin, 18px);
+            border-radius: 0;
+            outline: var(--outline_w) solid var(--outline);
+            outline-offset: calc(-1 * var(--outline_w));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 0;
+        }
+        .possession-bottom h3 {
+            font-size: clamp(16px, 2.2vmin, 28px);
+            margin-bottom: clamp(6px, 1.1vmin, 10px);
+            color: var(--muted);
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        .possession-value {
+            /* Evita corte no rodapé */
+            font-size: clamp(72px, 10vmin, 150px);
+            font-weight: 900;
+            color: var(--digital2);
+            line-height: 1;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            letter-spacing: 0.12em;
+        }
+        /* Estados (rodando / alerta) */
+        #gameTimerPanel.active .game-time-value,
+        #possessionTimerPanel.active .possession-value {
+            filter: brightness(1.15);
+        }
+        #gameTimerPanel.warning .game-time-value,
+        #possessionTimerPanel.warning .possession-value {
+            color: var(--warn);
+        }
+
+        @media (max-width: 720px) {
+            .layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr 1fr;
+            }
+            #gameTimerPanel { grid-column: 1; grid-row: 1; }
+            #possessionTimerPanel { grid-column: 1; grid-row: 2; }
+            #teamADisplay { grid-column: 1; grid-row: 3; }
+            #teamBDisplay { grid-column: 1; grid-row: 4; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scoreboard-header">
+        <h1>BASQUETE 3X3</h1>
+    </div>
+
+    <div class="layout">
+        <div class="game-time-top" id="gameTimerPanel">
+            <div class="game-time-label">TEMPO DE JOGO</div>
+            <div class="game-time-value" id="gameTimerDisplay">10:00</div>
+        </div>
+
+        <div class="team-display" id="teamADisplay">
+            <h2>TIME A</h2>
+            <div class="score-display" id="scoreADisplay">0</div>
+            <div class="fouls-display">FALTAS: <span id="foulsADisplay">0</span></div>
+            <div class="timeouts-display">TIMEOUTS: <span id="timeoutsADisplay">0</span></div>
+        </div>
+
+        <div class="team-display" id="teamBDisplay">
+            <h2>TIME B</h2>
+            <div class="score-display" id="scoreBDisplay">0</div>
+            <div class="fouls-display">FALTAS: <span id="foulsBDisplay">0</span></div>
+            <div class="timeouts-display">TIMEOUTS: <span id="timeoutsBDisplay">0</span></div>
+        </div>
+
+        <div class="possession-bottom" id="possessionTimerPanel">
+            <h3>TEMPO DE POSSE</h3>
+            <div class="possession-value" id="possessionTimerDisplay">12</div>
+        </div>
+    </div>
+
+    <script src="display.js"></script>
+</body>
+</html>
+

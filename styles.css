@@ -1,0 +1,476 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #667eea;
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #333;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-export {
+    background: #28a745;
+    color: white;
+}
+
+.btn-export:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+.btn-timer {
+    background: #667eea;
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.9em;
+}
+
+.btn-timer:hover {
+    background: #5568d3;
+}
+
+.btn-timer:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-timeout {
+    background: #f39c12;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-timeout:hover:not(:disabled) {
+    background: #e67e22;
+}
+
+.btn-timeout:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-add {
+    background: #17a2b8;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-add:hover {
+    background: #138496;
+}
+
+.btn-remove {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.btn-remove:hover {
+    background: #c82333;
+}
+
+section {
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+h3 {
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+/* Configurações */
+.config-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.config-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.config-item label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.config-item input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.config-item input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Times */
+.teams-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.team-panel {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border: 3px solid #667eea;
+}
+
+.team-panel h2 {
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #667eea;
+}
+
+.team-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.score-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+}
+
+.score-control button {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: #667eea;
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.score-control button:hover {
+    background: #5568d3;
+    transform: scale(1.1);
+}
+
+.score {
+    font-size: 4em;
+    font-weight: bold;
+    color: #667eea;
+    min-width: 100px;
+    text-align: center;
+}
+
+.fouls-control, .timeout-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+}
+
+.fouls-control label, .timeout-control label {
+    font-weight: bold;
+    color: #555;
+}
+
+.fouls-control button, .timeout-control button {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 5px;
+    background: #6c757d;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.fouls-control button:hover {
+    background: #5a6268;
+}
+
+.fouls {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #e74c3c;
+    min-width: 30px;
+    text-align: center;
+}
+
+.timeouts {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #f39c12;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* Jogadores */
+.players-section {
+    margin-top: 20px;
+}
+
+.add-player {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.add-player input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.add-player input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.player-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
+.player-item:hover {
+    border-color: #667eea;
+}
+
+.player-number {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #667eea;
+    min-width: 80px;
+}
+
+.player-points {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #28a745;
+    min-width: 80px;
+}
+
+.player-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.player-actions button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background: #667eea;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.player-actions button:hover {
+    background: #5568d3;
+}
+
+/* Timers */
+.timers-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.timer-panel {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.timer-panel h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.timer-display {
+    font-size: 3em;
+    font-weight: bold;
+    color: #667eea;
+    margin: 20px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+}
+
+.timer-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.timer-controls select {
+    padding: 8px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 100%;
+    max-width: 200px;
+}
+
+.timer-controls select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Ações */
+.actions-section {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 2px solid #ddd;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .teams-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .config-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .timers-section {
+        grid-template-columns: 1fr;
+    }
+    
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .score {
+        font-size: 3em;
+    }
+}
+

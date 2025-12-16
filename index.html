@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Placar - Basquete 3x3</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏀 Controle de Placar - Basquete 3x3</h1>
+            <div class="header-actions">
+                <button onclick="openDisplay()" class="btn btn-secondary">Abrir Tela de Placar</button>
+                <button onclick="exportGame()" class="btn btn-export">Exportar Jogo</button>
+            </div>
+        </header>
+
+        <!-- Configurações do Jogo -->
+        <section class="config-section">
+            <h2>⚙️ Configurações do Jogo</h2>
+            <div class="config-grid">
+                <div class="config-item">
+                    <label>Tempo de Jogo (minutos):</label>
+                    <input type="number" id="gameTime" min="1" value="10" onchange="updateConfig()">
+                </div>
+                <div class="config-item">
+                    <label>Tempo de Posse (segundos):</label>
+                    <input type="number" id="possessionTime" min="1" value="12" onchange="updateConfig()">
+                </div>
+                <div class="config-item">
+                    <label>Tempo de Timeout (segundos):</label>
+                    <input type="number" id="timeoutTime" min="1" value="30" onchange="updateConfig()">
+                </div>
+                <div class="config-item">
+                    <label>Timeouts por Time:</label>
+                    <input type="number" id="timeoutsPerTeam" min="0" value="1" onchange="updateConfig()">
+                </div>
+            </div>
+        </section>
+
+        <!-- Times e Jogadores -->
+        <section class="teams-section">
+            <div class="team-panel">
+                <h2>Time A</h2>
+                <div class="team-controls">
+                    <div class="score-control">
+                        <button onclick="changeScore('A', -1)">-</button>
+                        <span id="scoreA" class="score">0</span>
+                        <button onclick="changeScore('A', 1)">+</button>
+                    </div>
+                    <div class="fouls-control">
+                        <label>Faltas:</label>
+                        <button onclick="changeFouls('A', -1)">-</button>
+                        <span id="foulsA" class="fouls">0</span>
+                        <button onclick="changeFouls('A', 1)">+</button>
+                    </div>
+                    <div class="timeout-control">
+                        <label>Timeouts:</label>
+                        <span id="timeoutsA" class="timeouts">0</span>
+                        <button onclick="startTimeout('A')" id="timeoutBtnA" class="btn-timeout">Timeout</button>
+                    </div>
+                </div>
+                <div class="players-section">
+                    <h3>Jogadores (máx 4)</h3>
+                    <div class="add-player">
+                        <input type="number" id="playerNumberA" placeholder="Número do jogador" min="0" max="99">
+                        <button onclick="addPlayer('A')" class="btn-add">Adicionar</button>
+                    </div>
+                    <div id="playersA" class="players-list"></div>
+                </div>
+            </div>
+
+            <div class="team-panel">
+                <h2>Time B</h2>
+                <div class="team-controls">
+                    <div class="score-control">
+                        <button onclick="changeScore('B', -1)">-</button>
+                        <span id="scoreB" class="score">0</span>
+                        <button onclick="changeScore('B', 1)">+</button>
+                    </div>
+                    <div class="fouls-control">
+                        <label>Faltas:</label>
+                        <button onclick="changeFouls('B', -1)">-</button>
+                        <span id="foulsB" class="fouls">0</span>
+                        <button onclick="changeFouls('B', 1)">+</button>
+                    </div>
+                    <div class="timeout-control">
+                        <label>Timeouts:</label>
+                        <span id="timeoutsB" class="timeouts">0</span>
+                        <button onclick="startTimeout('B')" id="timeoutBtnB" class="btn-timeout">Timeout</button>
+                    </div>
+                </div>
+                <div class="players-section">
+                    <h3>Jogadores (máx 4)</h3>
+                    <div class="add-player">
+                        <input type="number" id="playerNumberB" placeholder="Número do jogador" min="0" max="99">
+                        <button onclick="addPlayer('B')" class="btn-add">Adicionar</button>
+                    </div>
+                    <div id="playersB" class="players-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controles de Tempo -->
+        <section class="timers-section">
+            <div class="timer-panel">
+                <h3>Tempo de Jogo</h3>
+                <div class="timer-display" id="gameTimer">10:00</div>
+                <div class="timer-controls">
+                    <button onclick="startGameTimer()" id="gameTimerBtn" class="btn-timer">Iniciar</button>
+                    <button onclick="pauseGameTimer()" class="btn-timer">Pausar</button>
+                    <button onclick="resetGameTimer()" class="btn-timer">Resetar</button>
+                </div>
+            </div>
+
+            <div class="timer-panel">
+                <h3>Tempo de Posse</h3>
+                <div class="timer-display" id="possessionTimer">12</div>
+                <div class="timer-controls">
+                    <select id="possessionTeam" onchange="updatePossessionTeam()">
+                        <option value="A">Time A</option>
+                        <option value="B">Time B</option>
+                    </select>
+                    <button onclick="startPossessionTimer()" id="possessionTimerBtn" class="btn-timer">Iniciar</button>
+                    <button onclick="resetPossessionTimer()" class="btn-timer">Resetar</button>
+                </div>
+            </div>
+
+            <div class="timer-panel">
+                <h3>Timeout</h3>
+                <div class="timer-display" id="timeoutTimer">00</div>
+                <div class="timer-controls">
+                    <span id="timeoutTeamDisplay">Nenhum</span>
+                    <button onclick="stopTimeout()" class="btn-timer" id="stopTimeoutBtn" disabled>Parar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Botões de Ação -->
+        <section class="actions-section">
+            <button onclick="resetGame()" class="btn btn-danger">Novo Jogo</button>
+            <button onclick="exportCSV()" class="btn btn-export">Exportar CSV</button>
+            <button onclick="exportPDF()" class="btn btn-export">Exportar PDF</button>
+        </section>
+    </div>
+
+    <!-- Sons serão gerados via Web Audio API -->
+
+    <script src="script.js"></script>
+</body>
+</html>
+
